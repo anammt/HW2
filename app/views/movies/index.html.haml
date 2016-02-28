@@ -19,18 +19,13 @@
         %td= link_to "More about #{movie.title}", movie_path(movie)
 
 
-= form_tag movies_path, :method => :get, :id => "ratings_form" do
-  Include:
-  - Movie.all_ratings.each do |rating|
+= form_tag movies_path, :id => 'ratings_form', :method => :get do
+  Include: 
+  - @all_ratings.each do |rating|
     = rating
-    - if params[:ratings].nil? && session[:ratings].nil?
-      = check_box_tag "ratings[#{rating}]", 1, checked = true, :id => "ratings_#{rating}"
-    - elsif !(params[:ratings].nil?)
-      = check_box_tag "ratings[#{rating}]",1, params[:ratings].include?(rating), :id => "ratings_#{rating}"
-    - elsif !(session[:ratings].nil?)
-      = check_box_tag "ratings[#{rating}]",1, session[:ratings].include?(rating), :id => "ratings_#{rating}"
+    = check_box_tag "ratings[#{rating}]", rating, if session[:ratings]; session[:ratings].include?(rating) end
     
-  = submit_tag 'Refresh', :id => "ratings_submit"
+  = submit_tag 'Refresh', :id=>'ratings_submit'
   
 = link_to 'Add New Movie', new_movie_path
 <br />
