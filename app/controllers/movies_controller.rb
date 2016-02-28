@@ -1,47 +1,48 @@
 class MoviesController < ApplicationController
 
-def index
-  	desired = params[:sort_by]
-  	ratings = params[:ratings]
-  	@hi_sort = nil
+  def index
+    hashArray = {}
+    desired=params[:sort_by]
+    ratings=params[:ratings]
+    @hi_sort = nil
   	@hi_release = nil
-
-  	@all_ratings = [ 'G', 'R', 'PG-13' , 'PG', 'NC-17']
-
-  	if desired == nil && ratings == nil
-  		if session[:ratings]
-  			desired = session[:sort_by]
-  		end
-  		if session[:sort_by]
-  			ratings = session[:ratings]
-  		end
-  	end
-   if desired != nil && ratings != nil
-   	@movies = Movie.find(:all, :conditions => {:rating => ratings.keys}, :order => desired)
-   	session[:sort_by] = desired
-   	session[:ratings] = ratings
-   elsif desired != nil && ratings == nil
-   	@movies = Movie.find(:all, :conditions => {:rating => session[:ratings].keys}, :order => desired)
-   	session[:sort_by] = desired
-
-   if desired == "title"
-   	@hi_sort = "hilite"
-   	@hi_release= nil
-   else
-   	@hi_sort = nil
-   	@hi_release = "hilite"
-   end
-
-   elsif desired == nil && ratings != nil
-   	@movies = Movie.find(:all, :conditions => {:rating => ratings.keys}, :order => session[:sort_by])
-   	session[:ratings] = ratings
-   else
-   	@movies = Movie.all
-   	# session[:ratings] = {'G' => '1', 'R' => '1', 'PG-13' => '1', 'PG' => '1', 'NC-17'=> '1'}
-   end
-    	
-   	
-end
+  	
+    if (params.has_key?(:sort_by))
+      hashArray = desired
+    elsif (session.has_key?(:sort_by))
+      hashArray = session[:sort_by]
+    end
+    
+    if hashArray 
+      session[:sort_by] = hashArray
+      if desired == "title"
+   	    @hi_sort = "hilite"
+      	@hi_release= nil
+      else
+   	    @hi_sort = nil
+   	    @hi_release = "hilite"
+      end
+    end
+    
+    if (params.has_key?(:ratings))
+      checkedHash = ratings
+    elsif (session.has_key?(:ratings))
+      checkedHash = session[:ratings]
+    end
+    if checkedHash  
+      session[:ratings] = checkedHash
+    end
+    
+    if checkedHash
+      flash.keep
+      @movies = Movie.where("rating in (?)", checkedHash.keys)
+      @movies = @movies.order(hashArray)
+    else
+      flash.keep
+      @movies = Movie.order(hashArray)
+    end
+    
+  end
     	
 
   def movie_params
