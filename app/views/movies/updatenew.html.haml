@@ -1,0 +1,20 @@
+-# updatenew.html.haml using partial
+
+%h1 Update Existing Movie
+
+= form_tag movies_updatesuccess_path, :method => :get do
+
+  = label :movie, :title, 'Old Title'
+  = text_field :oldTitle, 'title'
+  
+  = label :movie, :title, 'New Title'
+  = text_field :updatedTitle, 'newtitle'
+    
+  = label :movie, :rating, 'Rating'
+  = select :updatedRating, :rating, ['G','PG','PG-13','R','NC-17']
+
+  = label :movie, :release_date, 'Released On'
+  = date_select :updatedDate, :release_date
+
+  = submit_tag 'Update Movie Info'
+  = link_to 'Back', movies_path

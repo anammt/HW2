@@ -1,0 +1,10 @@
+%h1 Delete a Movie By Name
+
+= form_tag  movies_deletebynameC_path, :method => :get do
+
+  = label :movie, :title, 'Movie Title'
+  = text_field :movie, 'title'
+  
+  = submit_tag 'Delete Movie'
+  
+= link_to 'Home', movies_path
